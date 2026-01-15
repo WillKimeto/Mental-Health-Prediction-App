@@ -108,10 +108,4 @@ GitHub: @WillKimeto
 This tool is for informational and educational purposes only. It is not a certified medical device. The predictions made by this application should not be considered a medical diagnosis. If you are experiencing a mental health crisis, please contact a licensed healthcare professional or a crisis service immediately.
 
 
-To use this:
-1. Copy the entire content above
-2. Create a new file in your project directory called `README.md`
-3. Paste the content into the file
-4. Save the file
 
-The file is now ready to be committed to your GitHub repository. The markdown will render beautifully on GitHub with all the formatting, badges, and structure intact.
