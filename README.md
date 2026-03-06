@@ -23,7 +23,7 @@ This project aims to provide an accessible tool for initial mental health screen
 
 A live version of the app is hosted on Streamlit Community Cloud:  
 [![Open in Streamlit](https://static.streamlit.io/badges/streamlit_badge_black_white.svg)](https://your-app-name.streamlit.app/)
-*(Replace `https://your-app-name.streamlit.app/` with your actual deployment URL)*
+
 
 ## Installation & Local Setup
 
