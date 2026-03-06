@@ -1,0 +1,784 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Tumaini — Mental Health Companion</title>
+  <link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,600;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet"/>
+  <style>
+    /* ── Variables ─────────────────────────────── */
+    :root {
+      --cream:    #fdf6f0;
+      --blush:    #f9e4d4;
+      --rose:     #e8a598;
+      --terracot: #c4715e;
+      --deep:     #7a3f35;
+      --sage:     #8aab94;
+      --sage-lt:  #d4e8db;
+      --text:     #3d2b27;
+      --muted:    #9e7b73;
+      --white:    #ffffff;
+      --shadow:   0 4px 24px rgba(122,63,53,0.10);
+      --radius:   16px;
+    }
+
+    /* ── Reset ─────────────────────────────────── */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: 'DM Sans', sans-serif;
+      background: var(--cream);
+      color: var(--text);
+      min-height: 100vh;
+    }
+
+    /* ── Nav ───────────────────────────────────── */
+    nav {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      background: rgba(253,246,240,0.92);
+      backdrop-filter: blur(10px);
+      border-bottom: 1px solid var(--blush);
+      padding: 0 2rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      height: 64px;
+    }
+
+    .nav-logo {
+      font-family: 'Lora', serif;
+      font-size: 1.4rem;
+      color: var(--deep);
+      font-weight: 600;
+      letter-spacing: -0.3px;
+    }
+
+    .nav-logo span {
+      color: var(--terracot);
+    }
+
+    .nav-links {
+      display: flex;
+      gap: 2rem;
+      list-style: none;
+    }
+
+    .nav-links a {
+      text-decoration: none;
+      color: var(--muted);
+      font-size: 0.9rem;
+      font-weight: 500;
+      transition: color 0.2s;
+    }
+
+    .nav-links a:hover { color: var(--terracot); }
+
+    /* ── Hero ──────────────────────────────────── */
+    .hero {
+      text-align: center;
+      padding: 80px 2rem 60px;
+      max-width: 680px;
+      margin: 0 auto;
+    }
+
+    .hero-badge {
+      display: inline-block;
+      background: var(--sage-lt);
+      color: #4a7a5a;
+      font-size: 0.78rem;
+      font-weight: 500;
+      padding: 6px 14px;
+      border-radius: 100px;
+      margin-bottom: 1.5rem;
+      letter-spacing: 0.3px;
+    }
+
+    .hero h1 {
+      font-family: 'Lora', serif;
+      font-size: clamp(2rem, 5vw, 3rem);
+      line-height: 1.2;
+      color: var(--deep);
+      margin-bottom: 1rem;
+    }
+
+    .hero h1 em {
+      color: var(--terracot);
+      font-style: italic;
+    }
+
+    .hero p {
+      color: var(--muted);
+      font-size: 1.05rem;
+      line-height: 1.7;
+      font-weight: 300;
+      margin-bottom: 2rem;
+    }
+
+    .hero-disclaimer {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: #fef3ee;
+      border: 1px solid var(--rose);
+      border-radius: 10px;
+      padding: 10px 16px;
+      font-size: 0.82rem;
+      color: var(--terracot);
+    }
+
+    /* ── Section wrapper ───────────────────────── */
+    .section {
+      max-width: 860px;
+      margin: 0 auto;
+      padding: 0 1.5rem 80px;
+    }
+
+    .section-header {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 2rem;
+    }
+
+    .section-icon {
+      width: 42px;
+      height: 42px;
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.2rem;
+      flex-shrink: 0;
+    }
+
+    .section-icon.predict { background: var(--blush); }
+    .section-icon.chat    { background: var(--sage-lt); }
+
+    .section-header h2 {
+      font-family: 'Lora', serif;
+      font-size: 1.5rem;
+      color: var(--deep);
+    }
+
+    .section-header p {
+      font-size: 0.88rem;
+      color: var(--muted);
+      margin-top: 2px;
+    }
+
+    /* ── Card ──────────────────────────────────── */
+    .card {
+      background: var(--white);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      border: 1px solid var(--blush);
+      overflow: hidden;
+    }
+
+    /* ── Prediction form ───────────────────────── */
+    .predict-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 0;
+    }
+
+    @media (max-width: 600px) {
+      .predict-grid { grid-template-columns: 1fr; }
+    }
+
+    .predict-form {
+      padding: 2rem;
+      border-right: 1px solid var(--blush);
+    }
+
+    .predict-result {
+      padding: 2rem;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      min-height: 320px;
+      background: var(--cream);
+    }
+
+    .field {
+      margin-bottom: 1.4rem;
+    }
+
+    .field label {
+      display: block;
+      font-size: 0.85rem;
+      font-weight: 500;
+      color: var(--text);
+      margin-bottom: 6px;
+    }
+
+    .field .hint {
+      font-size: 0.77rem;
+      color: var(--muted);
+      margin-bottom: 8px;
+    }
+
+    .field select {
+      width: 100%;
+      padding: 10px 14px;
+      border: 1.5px solid var(--blush);
+      border-radius: 10px;
+      background: var(--cream);
+      color: var(--text);
+      font-family: 'DM Sans', sans-serif;
+      font-size: 0.92rem;
+      appearance: none;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%239e7b73' d='M6 8L1 3h10z'/%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: right 12px center;
+      cursor: pointer;
+      transition: border-color 0.2s;
+    }
+
+    .field select:focus {
+      outline: none;
+      border-color: var(--terracot);
+    }
+
+    .predict-btn {
+      width: 100%;
+      padding: 12px;
+      background: var(--terracot);
+      color: white;
+      border: none;
+      border-radius: 10px;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 0.95rem;
+      font-weight: 500;
+      cursor: pointer;
+      transition: background 0.2s, transform 0.1s;
+      margin-top: 0.5rem;
+    }
+
+    .predict-btn:hover  { background: var(--deep); }
+    .predict-btn:active { transform: scale(0.98); }
+
+    .predict-btn:disabled {
+      background: var(--rose);
+      cursor: not-allowed;
+    }
+
+    /* Result states */
+    .result-placeholder {
+      text-align: center;
+      color: var(--muted);
+    }
+
+    .result-placeholder .icon {
+      font-size: 2.5rem;
+      margin-bottom: 1rem;
+      opacity: 0.4;
+    }
+
+    .result-placeholder p {
+      font-size: 0.88rem;
+      font-weight: 300;
+    }
+
+    .result-score {
+      text-align: center;
+      animation: fadeUp 0.4s ease;
+    }
+
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(12px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    .score-ring {
+      width: 120px;
+      height: 120px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto 1.2rem;
+      font-family: 'Lora', serif;
+      font-size: 1.6rem;
+      font-weight: 600;
+      border: 5px solid;
+    }
+
+    .score-ring.high { border-color: #e8a598; background: #fef0ee; color: var(--terracot); }
+    .score-ring.low  { border-color: var(--sage); background: var(--sage-lt); color: #3a7a50; }
+
+    .score-label {
+      font-family: 'Lora', serif;
+      font-size: 1rem;
+      margin-bottom: 0.6rem;
+    }
+
+    .score-label.high { color: var(--terracot); }
+    .score-label.low  { color: #3a7a50; }
+
+    .score-desc {
+      font-size: 0.82rem;
+      color: var(--muted);
+      line-height: 1.6;
+      max-width: 220px;
+    }
+
+    /* ── Divider ───────────────────────────────── */
+    .divider {
+      text-align: center;
+      padding: 20px 0 60px;
+      color: var(--muted);
+      font-size: 0.85rem;
+    }
+
+    .divider::before {
+      content: '';
+      display: block;
+      width: 1px;
+      height: 48px;
+      background: var(--blush);
+      margin: 0 auto 12px;
+    }
+
+    /* ── Chat ──────────────────────────────────── */
+    .chat-window {
+      height: 420px;
+      overflow-y: auto;
+      padding: 1.5rem;
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+      scroll-behavior: smooth;
+    }
+
+    .chat-window::-webkit-scrollbar { width: 4px; }
+    .chat-window::-webkit-scrollbar-thumb { background: var(--blush); border-radius: 4px; }
+
+    .msg {
+      max-width: 78%;
+      padding: 12px 16px;
+      border-radius: 16px;
+      font-size: 0.9rem;
+      line-height: 1.6;
+      animation: fadeUp 0.3s ease;
+    }
+
+    .msg.user {
+      align-self: flex-end;
+      background: var(--terracot);
+      color: white;
+      border-bottom-right-radius: 4px;
+    }
+
+    .msg.bot {
+      align-self: flex-start;
+      background: var(--white);
+      color: var(--text);
+      border: 1px solid var(--blush);
+      border-bottom-left-radius: 4px;
+      box-shadow: 0 2px 8px rgba(122,63,53,0.06);
+    }
+
+    .msg.bot.typing {
+      color: var(--muted);
+      font-style: italic;
+    }
+
+    .chat-intro {
+      align-self: center;
+      text-align: center;
+      color: var(--muted);
+      font-size: 0.85rem;
+      padding: 1rem;
+    }
+
+    .chat-intro .avatar {
+      width: 52px;
+      height: 52px;
+      border-radius: 50%;
+      background: var(--sage-lt);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.5rem;
+      margin: 0 auto 0.75rem;
+    }
+
+    .chat-input-row {
+      display: flex;
+      gap: 10px;
+      padding: 1rem 1.5rem 1.5rem;
+      border-top: 1px solid var(--blush);
+      background: var(--cream);
+    }
+
+    .chat-input-row input {
+      flex: 1;
+      padding: 11px 16px;
+      border: 1.5px solid var(--blush);
+      border-radius: 100px;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 0.9rem;
+      background: var(--white);
+      color: var(--text);
+      transition: border-color 0.2s;
+    }
+
+    .chat-input-row input:focus {
+      outline: none;
+      border-color: var(--sage);
+    }
+
+    .chat-input-row input::placeholder { color: var(--muted); }
+
+    .send-btn {
+      width: 42px;
+      height: 42px;
+      border-radius: 50%;
+      background: var(--sage);
+      border: none;
+      color: white;
+      font-size: 1rem;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: background 0.2s, transform 0.1s;
+      flex-shrink: 0;
+    }
+
+    .send-btn:hover  { background: #5a8a6a; }
+    .send-btn:active { transform: scale(0.92); }
+    .send-btn:disabled { background: #c0d8c8; cursor: not-allowed; }
+
+    /* ── Suggestions ───────────────────────────── */
+    .suggestions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      padding: 0 1.5rem 1rem;
+    }
+
+    .suggestion-chip {
+      font-size: 0.78rem;
+      padding: 6px 12px;
+      border: 1px solid var(--blush);
+      border-radius: 100px;
+      background: var(--white);
+      color: var(--muted);
+      cursor: pointer;
+      transition: all 0.2s;
+      font-family: 'DM Sans', sans-serif;
+    }
+
+    .suggestion-chip:hover {
+      border-color: var(--sage);
+      color: #3a7a50;
+      background: var(--sage-lt);
+    }
+
+    /* ── Footer ────────────────────────────────── */
+    footer {
+      text-align: center;
+      padding: 2rem;
+      border-top: 1px solid var(--blush);
+      color: var(--muted);
+      font-size: 0.8rem;
+    }
+
+    footer strong { color: var(--terracot); }
+
+    /* ── Loading spinner ───────────────────────── */
+    .spinner {
+      display: inline-block;
+      width: 14px;
+      height: 14px;
+      border: 2px solid rgba(255,255,255,0.4);
+      border-top-color: white;
+      border-radius: 50%;
+      animation: spin 0.7s linear infinite;
+      vertical-align: middle;
+      margin-right: 6px;
+    }
+
+    @keyframes spin { to { transform: rotate(360deg); } }
+  </style>
+</head>
+<body>
+
+  <!-- ── Nav ───────────────────────────────────── -->
+  <nav>
+    <div class="nav-logo">Tuma<span>ini</span></div>
+    <ul class="nav-links">
+      <li><a href="#predict">Prediction</a></li>
+      <li><a href="#chat">Chat</a></li>
+    </ul>
+  </nav>
+
+  <!-- ── Hero ──────────────────────────────────── -->
+  <div class="hero">
+    <h1>Your mental health,<br/><em>understood.</em></h1>
+    <p>
+      Tumaini uses machine learning to estimate mental health risk
+      and pairs it with an AI companion to help you make sense of your results —
+      gently, privately, and without judgment.
+    </p>
+    <div class="hero-disclaimer">
+      ⚠️ For educational awareness only — not a medical diagnosis
+    </div>
+  </div>
+
+  <!-- ════════════════════════════════════════════
+       SECTION 1 — PREDICTION
+  ════════════════════════════════════════════ -->
+  <div class="section" id="predict">
+    <div class="section-header">
+      <div class="section-icon predict">📊</div>
+      <div>
+        <h2>Risk Prediction</h2>
+        <p>Answer three questions to get your personalised risk score</p>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="predict-grid">
+
+        <!-- Form -->
+        <div class="predict-form">
+          <div class="field">
+            <label>Family History of Mental Health Issues</label>
+            <div class="hint">Has anyone in your immediate family been diagnosed with or treated for a mental health condition?</div>
+            <select id="family_history">
+              <option value="No">No</option>
+              <option value="Yes">Yes</option>
+            </select>
+          </div>
+
+          <div class="field">
+            <label>Days Indoors (over the past few months)</label>
+            <div class="hint">On average, how many days have you been staying indoors?</div>
+            <select id="days_indoors">
+              <option value="1-14 days">1–14 days</option>
+              <option value="15-30 days">15–30 days</option>
+              <option value="More than 2 months">More than 2 months</option>
+            </select>
+          </div>
+
+          <div class="field">
+            <label>Growing Stress</label>
+            <div class="hint">Have you noticed your stress levels increasing recently?</div>
+            <select id="growing_stress">
+              <option value="No">No</option>
+              <option value="Yes">Yes</option>
+              <option value="Maybe">Maybe</option>
+            </select>
+          </div>
+
+          <button class="predict-btn" id="predictBtn" onclick="runPrediction()">
+            🔍 Get My Score
+          </button>
+        </div>
+
+        <!-- Result -->
+        <div class="predict-result" id="resultPanel">
+          <div class="result-placeholder">
+            <div class="icon">🧭</div>
+            <p>Your risk score will<br/>appear here</p>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <!-- Divider -->
+  <div class="divider">scroll down to chat with Tumaini</div>
+
+  <!-- ════════════════════════════════════════════
+       SECTION 2 — CHATBOT
+  ════════════════════════════════════════════ -->
+  <div class="section" id="chat">
+    <div class="section-header">
+      <div class="section-icon chat">💬</div>
+      <div>
+        <h2>Chat with Tumaini</h2>
+        <p>Ask about your score, coping strategies, or anything on your mind</p>
+      </div>
+    </div>
+
+    <div class="card">
+
+      <!-- Suggestion chips -->
+      <div class="suggestions">
+        <button class="suggestion-chip" onclick="sendSuggestion(this)">What does my score mean?</button>
+        <button class="suggestion-chip" onclick="sendSuggestion(this)">Tips for managing stress</button>
+        <button class="suggestion-chip" onclick="sendSuggestion(this)">When should I see a therapist?</button>
+        <button class="suggestion-chip" onclick="sendSuggestion(this)">How does family history affect risk?</button>
+      </div>
+
+      <!-- Chat messages -->
+      <div class="chat-window" id="chatWindow">
+        <div class="chat-intro">
+          <div class="avatar">🌿</div>
+          <strong>Hi, I'm Tumaini</strong><br/>
+          I'm here to help you understand your results and support your wellbeing.<br/>
+          Ask me anything — there are no wrong questions.
+        </div>
+      </div>
+
+      <!-- Input -->
+      <div class="chat-input-row">
+        <input
+          type="text"
+          id="chatInput"
+          placeholder="Type your message…"
+          onkeydown="if(event.key==='Enter') sendMessage()"
+        />
+        <button class="send-btn" id="sendBtn" onclick="sendMessage()" title="Send">➤</button>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ── Footer ─────────────────────────────────── -->
+  <footer>
+    Built by <strong>Will Kimeto</strong><br/>
+    <span style="opacity:0.6">Tumaini means "hope" in Swahili</span>
+  </footer>
+
+  <!-- ════════════════════════════════════════════
+       JAVASCRIPT
+  ════════════════════════════════════════════ -->
+  <script>
+    // ── CONFIG ─────────────────────────────────────
+    // Replace this with your actual Render backend URL after deploying
+    const API_BASE = "http://localhost:8000";
+
+    // Chat history sent with each request
+    let chatHistory = [];
+
+    // ── PREDICTION ─────────────────────────────────
+    async function runPrediction() {
+      const btn = document.getElementById("predictBtn");
+      const panel = document.getElementById("resultPanel");
+
+      btn.disabled = true;
+      btn.innerHTML = '<span class="spinner"></span> Analysing…';
+
+      try {
+        const res = await fetch(`${API_BASE}/predict`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            family_history: document.getElementById("family_history").value,
+            days_indoors:   document.getElementById("days_indoors").value,
+            growing_stress: document.getElementById("growing_stress").value,
+          })
+        });
+
+        const data = await res.json();
+        const isHigh = data.high_risk;
+
+        panel.innerHTML = `
+          <div class="result-score">
+            <div class="score-ring ${isHigh ? 'high' : 'low'}">${data.percentage}</div>
+            <div class="score-label ${isHigh ? 'high' : 'low'}">
+              ${isHigh ? '🔴 Elevated Risk' : '🟢 Lower Risk'}
+            </div>
+            <p class="score-desc">
+              ${isHigh
+                ? 'Your inputs suggest patterns associated with individuals who have sought treatment. Consider speaking to a professional.'
+                : 'Your inputs suggest a lower risk profile. Mental health is dynamic — keep checking in with yourself.'}
+            </p>
+          </div>
+        `;
+      } catch (err) {
+        panel.innerHTML = `<p style="color:var(--terracot);font-size:0.85rem;text-align:center;">Could not connect to the server.<br/>Make sure the backend is running.</p>`;
+      }
+
+      btn.disabled = false;
+      btn.innerHTML = '🔍 Get My Score';
+    }
+
+    // ── CHAT ───────────────────────────────────────
+    function sendSuggestion(chip) {
+      document.getElementById("chatInput").value = chip.textContent;
+      sendMessage();
+    }
+
+    async function sendMessage() {
+      const input = document.getElementById("chatInput");
+      const message = input.value.trim();
+      if (!message) return;
+
+      input.value = "";
+      appendMessage("user", message);
+
+      const sendBtn = document.getElementById("sendBtn");
+      sendBtn.disabled = true;
+
+      // Add typing indicator
+      const typingId = "typing-" + Date.now();
+      appendMessage("bot", "Tumaini is thinking…", typingId, true);
+
+      try {
+        const res = await fetch(`${API_BASE}/chat`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ message, history: chatHistory })
+        });
+
+        // Remove typing indicator
+        document.getElementById(typingId)?.remove();
+
+        // Stream the response
+        const reader = res.body.getReader();
+        const decoder = new TextDecoder();
+        let fullText = "";
+        const msgEl = appendMessage("bot", "");
+
+        while (true) {
+          const { done, value } = await reader.read();
+          if (done) break;
+          fullText += decoder.decode(value, { stream: true });
+          msgEl.textContent = fullText;
+          scrollChat();
+        }
+
+        // Save to history
+        chatHistory.push({ role: "user",      content: message  });
+        chatHistory.push({ role: "assistant", content: fullText });
+
+      } catch (err) {
+        document.getElementById(typingId)?.remove();
+        appendMessage("bot", "Sorry, I couldn't connect to the server. Make sure the backend is running.");
+      }
+
+      sendBtn.disabled = false;
+      input.focus();
+    }
+
+    function appendMessage(role, text, id = null, isTyping = false) {
+      const window = document.getElementById("chatWindow");
+      const msg = document.createElement("div");
+      msg.className = `msg ${role}${isTyping ? ' typing' : ''}`;
+      if (id) msg.id = id;
+      msg.textContent = text;
+      window.appendChild(msg);
+      scrollChat();
+      return msg;
+    }
+
+    function scrollChat() {
+      const window = document.getElementById("chatWindow");
+      window.scrollTop = window.scrollHeight;
+    }
+  </script>
+
+</body>
+</html>
